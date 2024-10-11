@@ -13,7 +13,7 @@ class ChatServiceTest {
 
     // Тест для метода getUnreadChatsCount
     @Test
-    fun `should get unread chats count`() {
+    fun shouldGetUnreadChatsCount() {
         val chat1 = chatService.createChat(1)
         chatService.createMessage(chat1.id, 1, "Message 1")
         val chat2 = chatService.createChat(2)
@@ -24,7 +24,7 @@ class ChatServiceTest {
 
     // Тест для метода getChats
     @Test
-    fun `should get chats`() {
+    fun shouldGetChats() {
         val chat1 = chatService.createChat(1)
         val chat2 = chatService.createChat(2)
 
@@ -36,7 +36,7 @@ class ChatServiceTest {
 
     // Тест для метода getLastMessages
     @Test
-    fun `should get last messages`() {
+    fun shouldGetLastMessages() {
         val chat = chatService.createChat(1)
         chatService.createMessage(chat.id, 1, "Message 1")
         chatService.createMessage(chat.id, 1, "Message 2")
@@ -55,7 +55,7 @@ class ChatServiceTest {
 
     // Тест для метода getLastMessages, когда чат пуст
     @Test
-    fun `should get last messages when chat has no messages`() {
+    fun shouldGetLastMessagesWhenChatHasNoMessages() {
         val chat = chatService.createChat(1)
         val lastMessages = chatService.getLastMessages(chat.id)
 
@@ -64,7 +64,7 @@ class ChatServiceTest {
 
     // Тест для метода getMessages
     @Test
-    fun `should get messages by user id and count`() {
+    fun shouldGetMessagesByUserIdAndCount() {
         val chat = chatService.createChat(1)
         chatService.createMessage(chat.id, 1, "Message 1")
         chatService.createMessage(chat.id, 1, "Message 2")
@@ -81,14 +81,14 @@ class ChatServiceTest {
 
     // Тест для метода getMessages, когда нет сообщений для пользователя
     @Test
-    fun `should get empty list when no messages for user`() {
+    fun shouldGetEmptyListWhenNoMessagesForUser() {
         val messages = chatService.getMessages(1, 3)
         assertTrue(messages.isEmpty())
     }
 
     // Тест для метода createMessage
     @Test
-    fun `should create message`() {
+    fun shouldCreateMessage() {
         val chat = chatService.createChat(1)
         val message = chatService.createMessage(chat.id, 1, "Test Message")
 
@@ -97,14 +97,17 @@ class ChatServiceTest {
     }
 
     // Тест для метода createMessage, когда чата не существует
-    @Test(expected = ChatNotFoundException::class)
-    fun `should throw exception when creating message for non-existent chat`() {
-        chatService.createMessage(100, 1, "Test Message")
+    @Test
+    fun shouldCreateChatWhenCreatingMessageForNonExistentChat() {
+        val message = chatService.createMessage(100, 1, "Test Message") // Создаем сообщение для чата 100
+
+        assertEquals(100, message.chatId) // Проверяем, что chatId сообщения совпадает с заданным
+        assertEquals(1, chatService.getChats().size) // Проверяем, что создался новый чат
     }
 
     // Тест для метода deleteMessage
     @Test
-    fun `should delete message`() {
+    fun shouldDeleteMessage() {
         val chat = chatService.createChat(1)
         val message = chatService.createMessage(chat.id, 1, "Test Message")
         assertTrue(chatService.deleteMessage(message.id))
@@ -114,7 +117,7 @@ class ChatServiceTest {
 
     // Тест для метода deleteMessage, когда нужно удалить сообщение в конкретном чате
     @Test
-    fun `should delete message in specific chat`() {
+    fun shouldDeleteMessageInSpecificChat() {
         val chat1 = chatService.createChat(1)
         val chat2 = chatService.createChat(2)
         val message1 = chatService.createMessage(chat1.id, 1, "Test Message 1")
@@ -127,7 +130,7 @@ class ChatServiceTest {
 
     // Тест для метода createChat
     @Test
-    fun `should create chat`() {
+    fun shouldCreateChat() {
         val chat = chatService.createChat(1)
 
         assertEquals(1, chat.id)
@@ -149,7 +152,7 @@ class ChatServiceTest {
 
     // Тест для метода deleteChat, когда чата не существует
     @Test
-    fun `should not delete chat if it doesn't exist`() {
+    fun shouldNotDeleteChatIfItDoesNotExist() {
         assertFalse(chatService.deleteChat(100))
     }
 }

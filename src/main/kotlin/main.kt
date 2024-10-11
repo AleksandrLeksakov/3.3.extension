@@ -1,13 +1,9 @@
 fun main() {
     val chatService = ChatService()
 
-    // Создаем два чата
-    val chat1 = chatService.createChat(1)
-    val chat2 = chatService.createChat(2)
-
-    // Отправляем сообщения в чаты
-    chatService.createMessage(chat1.id, 1, "Привет из чата 1")
-    chatService.createMessage(chat2.id, 2, "Привет из чата 2")
+    // Отправляем сообщения в чаты (теперь чаты создаются автоматически)
+    chatService.createMessage(1, 1, "Привет из чата 1") // Чат 1 будет создан автоматически
+    chatService.createMessage(2, 2, "Привет из чата 2") // Чат 2 будет создан автоматически
 
     // Выводим количество непрочитанных чатов
     println("Непрочитанных чатов: ${chatService.getUnreadChatsCount()}") // 2
@@ -20,7 +16,7 @@ fun main() {
 
     // Выводим последние сообщения из чата 1
     println("Последние сообщения из чата 1:")
-    for (message in chatService.getLastMessages(chat1.id)) {
+    for (message in chatService.getLastMessages(1)) {
         println(message)
     }
 
@@ -38,7 +34,7 @@ fun main() {
     println("Непрочитанных чатов: ${chatService.getUnreadChatsCount()}") // 1 (так как одно сообщение было удалено)
 
     // Удаляем чат 1
-    chatService.deleteChat(chat1.id)
+    chatService.deleteChat(1)
 
     // Выводим количество непрочитанных чатов
     println("Непрочитанных чатов: ${chatService.getUnreadChatsCount()}") // 0 (так как чат 1 был удален)
