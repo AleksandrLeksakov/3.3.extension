@@ -27,12 +27,22 @@ class ChatService {
 
     // Метод для получения сообщений от пользователя с заданным ID
     // count - количество сообщений, которые нужно вернуть
+
     fun getMessages(userId: Int, count: Int): List<Message> {
-        // Находим чат с пользователем, если чата нет - возвращаем пустой список
         val chat = chats.values.find { it.userId == userId } ?: return emptyList()
-        // Получаем последние count сообщений из чата
-        return chat.messages.takeLast(count).onEach { it.isRead = true } // Помечаем сообщения как прочитанные
+
+        // Проверяем, чтобы count был меньше или равен размеру списка сообщений
+        val realCount = if (count > chat.messages.size) chat.messages.size else count
+
+        return chat.messages.asSequence()                                               //  Sequence
+            .drop(chat.messages.size - realCount) // Удаляем первые элементы, оставляя последние realCount
+            .map { Message(it.id, it.chatId, it.userId, it.text, isRead = true, it.isDeleted) } // Создаем копии с isRead = true
+            .toList()
     }
+
+
+
+
 
     // Метод для создания нового сообщения в чате
     fun createMessage(chatId: Int, userId: Int, text: String): Message {
@@ -47,16 +57,16 @@ class ChatService {
 
     // Метод для удаления сообщения по ID
     fun deleteMessage(messageId: Int): Boolean {
-        // Используем flatMap для поиска сообщения по всем чатам
-        val message = chats.values.flatMap { it.messages }
+        val message = chats.values.asSequence()              //Sequence
+            .flatMap { it.messages.asSequence() }
             .find { it.id == messageId }
-        // Если сообщение найдено, помечаем его как удаленное
         if (message != null) {
             message.isDeleted = true
             return true
         }
         return false
     }
+
 
     // Метод для создания нового чата с пользователем
      fun createChat(userId: Int): Chat {

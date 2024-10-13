@@ -155,4 +155,21 @@ class ChatServiceTest {
     fun shouldNotDeleteChatIfItDoesNotExist() {
         assertFalse(chatService.deleteChat(100))
     }
+
+    @Test
+    fun testGetUnreadChatsCount_noUnreadMessages() {
+        val chatService = ChatService()
+        val chat = chatService.createChat(1)
+        chat.messages.add(Message(1, chat.id, 1, "Привет", isRead = true))
+        assertEquals(0, chatService.getUnreadChatsCount())
+    }
+
+    @Test
+    fun testGetUnreadChatsCount_oneUnreadMessage() {
+        val chatService = ChatService()
+        val chat = chatService.createChat(1)
+        chat.messages.add(Message(1, chat.id, 1, "Привет"))
+        assertEquals(1, chatService.getUnreadChatsCount())
+    }
+
 }
