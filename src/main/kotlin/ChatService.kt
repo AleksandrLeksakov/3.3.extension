@@ -1,6 +1,7 @@
 class ChatService {
     // Храним все чаты в Map, где ключ - ID чата, а значение - сам Chat
     private val chats = mutableMapOf<Int, Chat>()
+
     // Счетчик для генерации уникальных ID чатов
     private var chatIdCounter = 1
 
@@ -30,18 +31,13 @@ class ChatService {
 
     fun getMessages(userId: Int, count: Int): List<Message> {
         val chat = chats.values.find { it.userId == userId } ?: return emptyList()
+        val realCount = count.coerceAtMost(chat.messages.size)
 
-        // Проверяем, чтобы count был меньше или равен размеру списка сообщений
-        val realCount = if (count > chat.messages.size) chat.messages.size else count
-
-        return chat.messages.asSequence()                                               //  Sequence
-            .drop(chat.messages.size - realCount) // Удаляем первые элементы, оставляя последние realCount
-            .map { Message(it.id, it.chatId, it.userId, it.text, isRead = true, it.isDeleted) } // Создаем копии с isRead = true
+        return chat.messages.asReversed().asSequence()
+            .take(realCount)
+            .onEach { it.isRead = true } // Здесь помечаем как прочитанные
             .toList()
     }
-
-
-
 
 
     // Метод для создания нового сообщения в чате
@@ -57,9 +53,10 @@ class ChatService {
 
     // Метод для удаления сообщения по ID
     fun deleteMessage(messageId: Int): Boolean {
-        val message = chats.values.asSequence()              //Sequence
-            .flatMap { it.messages.asSequence() }
+        // Используем flatMap для поиска сообщения по всем чатам
+        val message = chats.values.flatMap { it.messages }
             .find { it.id == messageId }
+        // Если сообщение найдено, помечаем его как удаленное
         if (message != null) {
             message.isDeleted = true
             return true
@@ -69,7 +66,7 @@ class ChatService {
 
 
     // Метод для создания нового чата с пользователем
-     fun createChat(userId: Int): Chat {
+    fun createChat(userId: Int): Chat {
         // Создаем новый Chat с уникальным ID
         val chat = Chat(chatIdCounter++, userId)
         // Добавляем новый чат в Map

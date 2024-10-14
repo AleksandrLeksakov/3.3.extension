@@ -75,8 +75,8 @@ class ChatServiceTest {
         val messages = chatService.getMessages(1, 2) // Получаем 2 последних сообщения
 
         assertEquals(2, messages.size) // Проверяем размер списка сообщений
-        assertEquals("Message 4", messages[0].text) // Проверяем текст первого сообщения (последнего)
-        assertEquals("Message 5", messages[1].text) // Проверяем текст второго сообщения (предпоследнего)
+        assertEquals("Message 5", messages[0].text) // Проверяем текст первого сообщения (последнего)
+        assertEquals("Message 4", messages[1].text) // Проверяем текст второго сообщения (предпоследнего)
     }
 
     // Тест для метода getMessages, когда нет сообщений для пользователя
