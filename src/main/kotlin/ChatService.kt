@@ -1,6 +1,7 @@
 class ChatService {
     // Храним все чаты в Map, где ключ - ID чата, а значение - сам Chat
     private val chats = mutableMapOf<Int, Chat>()
+
     // Счетчик для генерации уникальных ID чатов
     private var chatIdCounter = 1
 
@@ -27,12 +28,17 @@ class ChatService {
 
     // Метод для получения сообщений от пользователя с заданным ID
     // count - количество сообщений, которые нужно вернуть
+
     fun getMessages(userId: Int, count: Int): List<Message> {
-        // Находим чат с пользователем, если чата нет - возвращаем пустой список
         val chat = chats.values.find { it.userId == userId } ?: return emptyList()
-        // Получаем последние count сообщений из чата
-        return chat.messages.takeLast(count).onEach { it.isRead = true } // Помечаем сообщения как прочитанные
+        val realCount = count.coerceAtMost(chat.messages.size)
+
+        return chat.messages.asReversed().asSequence()
+            .take(realCount)
+            .onEach { it.isRead = true } // Здесь помечаем как прочитанные
+            .toList()
     }
+
 
     // Метод для создания нового сообщения в чате
     fun createMessage(chatId: Int, userId: Int, text: String): Message {
@@ -58,8 +64,9 @@ class ChatService {
         return false
     }
 
+
     // Метод для создания нового чата с пользователем
-     fun createChat(userId: Int): Chat {
+    fun createChat(userId: Int): Chat {
         // Создаем новый Chat с уникальным ID
         val chat = Chat(chatIdCounter++, userId)
         // Добавляем новый чат в Map
